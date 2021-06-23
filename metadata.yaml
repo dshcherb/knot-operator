@@ -1,0 +1,31 @@
+# Copyright 2021 dmitriis
+# See LICENSE file for licensing details.
+name: knot-operator
+description: |
+  Knot DNS server operator
+maintainers:
+    - github.com/dshcherb
+summary: |
+  An operator to drive Knot DNS server's lifecycle in Kubernetes.
+containers:
+  knot:
+    resource: knot-image
+    mounts:
+        - storage: storage
+          location: /storage
+        - storage: config
+          location: /config
+
+resources:
+  knot-image:
+    type: oci-image
+    description: OCI image for knot (cznic/knot)
+
+storage:
+    storage:
+        type: filesystem
+    config:
+        type: filesystem
+peers:
+  knot-cluster:
+    interface: knot-cluster

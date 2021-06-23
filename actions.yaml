@@ -1,0 +1,67 @@
+# Copyright 2021 dmitriis
+# See LICENSE file for licensing details.
+
+set-zone-remotes:
+    description: Set DNS remotes to be used while proxying for a specific zone.
+    params:
+        zone:
+            description: A zone name to for which proxying needs to be configured.
+            type: string
+            default: ""
+        remote-servers:
+            description: |
+                A space-separated list of remote server:port strings to which queries
+                will be forwarded without modification for the specified zone.
+                An empty list disables proxying.
+                Example: [1.1.1.1:53, 8.8.8.8:53]
+            type: array
+            items:
+                type: string
+            default: []
+    required:
+        - zone
+        - remote-servers
+    additionalProperties: false
+add-zone:
+    description: |
+        Add a zone to a set of DNS servers.
+    params:
+        zone:
+            description: A zone name to modify.
+            type: string
+            default: ""
+    required:
+        - zone
+    additionalProperties: false
+set-zone:
+    description: |
+        Modify a zone by setting a resource record in it.
+    params:
+        zone:
+            description: A zone name to modify.
+            type: string
+            default: ""
+        owner:
+            description: The owner-name (or label) of the node in the zone file to which the RR belongs.
+            type: string
+        ttl:
+            description: A Time to Live (TTL) value for the resource record (RR).
+            type: integer
+            # https://datatracker.ietf.org/doc/html/rfc2181#section-8
+            minimum: 0
+            maximum: 2147483647
+        type:
+            description: |
+                The DNS resource record type. The full list may be obtained from IANA:
+                https://www.iana.org/assignments/dns-parameters/dns-parameters.xhtml#dns-parameters-4
+            type: string
+        rdata:
+            description: |
+                Resource record data per the specified type.
+            type: string
+    required:
+        - zone
+        - owner
+        - ttl
+        - type
+        - rdata

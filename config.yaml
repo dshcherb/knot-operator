@@ -1,0 +1,14 @@
+# Copyright 2021 dmitriis
+# See LICENSE file for licensing details.
+
+options:
+  remote-servers:
+    default: ''
+    description: |
+        Remote DNS servers to which locally unsatisfiable queries will be forwarded for all zones.
+        This option relies on the mod-dnsproxy global module in Knot DNS and does not specify a
+        concrete zone so it is applicable to queries to any zone. Note that this does not turn
+        Knot DNS into a caching resolver and the original query is forwarded as-is. For more
+        information please see the following URL
+        https://www.knot-dns.cz/docs/latest/html/modules.html#dnsproxy-tiny-dns-proxy
+    type: string
