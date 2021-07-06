@@ -1,0 +1,18 @@
+#!/bin/bash
+
+set -ex
+source /opt/functions.sh
+
+knotc conf-begin
+
+ignore_duplicate knotc conf-set zone[{{ zone }}]
+knotc conf-commit
+
+{% if resource_records %}
+knotc zone-begin {{ zone }}
+{% for rr in resource_records %}
+ignore_duplicate_record knotc zone-set {{ zone }} {{ rr['owner'] }} {{ rr['ttl'] }} {{ rr['type'] }} {{ rr['rdata'] }}
+{% endfor %}
+knotc zone-commit {{ zone }}
+{% endif %}
+

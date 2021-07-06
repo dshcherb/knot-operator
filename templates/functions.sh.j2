@@ -1,0 +1,36 @@
+#!/bin/bash
+
+ignore_stdout_stderr_regex() (
+  set +e
+  rc=$({
+    ("${@:2}" 2>&1 3>&-; echo "$?" >&3) |
+      grep -vP "$1" >&2 3>&-
+  } 3>&1)
+  err=$?
+  if [ "$rc" -ne 0 ] ; then
+    [ "$err" -ne 0 ] || exit 125
+    exit 0
+  else
+    exit "$rc"
+  fi
+) 3>&1
+
+ignore_duplicate() (
+  ignore_stdout_stderr_regex 'duplicate identifier' "$@"
+)
+
+ignore_invalid() (
+  ignore_stdout_stderr_regex 'invalid identifier' "$@"
+)
+
+ignore_not_exists() (
+  ignore_stdout_stderr_regex 'not exists' "$@"
+)
+
+ignore_not_exists_or_invalid() (
+  ignore_stdout_stderr_regex '(not exists)|(invalid identifier)' "$@"
+)
+
+ignore_duplicate_record() (
+  ignore_stdout_stderr_regex 'such record already exists in zone' "$@"
+)

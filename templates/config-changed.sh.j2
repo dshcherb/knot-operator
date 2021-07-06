@@ -1,0 +1,31 @@
+#!/bin/bash
+
+set -ex
+source /opt/functions.sh
+
+knotc conf-begin
+
+{% if remote_servers %}
+ignore_duplicate knotc conf-set remote[default_remote]
+
+ignore_not_exists knotc conf-unset remote[default_remote].address
+{% for server in remote_servers %}
+knotc conf-set remote[default_remote].address {{ server }}
+{% endfor %}
+
+ignore_duplicate knotc conf-set mod-dnsproxy[default]
+knotc conf-set mod-dnsproxy[default].remote default_remote
+knotc conf-set mod-dnsproxy[default].fallback on
+
+ignore_duplicate knotc conf-set template[default]
+knotc conf-set template[default].global-module mod-dnsproxy/default
+{% else %}
+
+ignore_not_exists_or_invalid knotc conf-unset remote[default_remote]
+ignore_not_exists_or_invalid knotc conf-unset mod-dnsproxy[default]
+ignore_not_exists knotc conf-unset template[default].global-module
+
+{% endif %}
+
+knotc conf-commit
+
